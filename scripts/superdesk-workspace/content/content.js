@@ -20,7 +20,6 @@
         body_html: {},
         byline: {},
         dateline: {},
-        located: {},
         sign_off: {},
         footer: {},
         body_footer: {},
@@ -51,7 +50,6 @@
         footer: {order: 17},
         body_footer: {order: 18},
         sign_off: {order: 19},
-        located: {},
         media: {},
         media_description: {}
     });
