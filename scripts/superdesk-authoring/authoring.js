@@ -1055,6 +1055,7 @@
         return {
             link: function($scope, elem, attrs) {
                 var _closing;
+                var tryPublish = false;
 
                 $scope.privileges = privileges.privileges;
                 $scope.dirty = false;
@@ -1300,6 +1301,7 @@
                 function publishItem(orig, item) {
                     var action = $scope.action === 'edit' ? 'publish' : $scope.action;
                     validate(orig, item);
+
                     return authoring.publish(orig, item, action)
                     .then(function(response) {
                         if (response) {
@@ -1340,7 +1342,15 @@
 
                 function validate(orig, item) {
                     $scope.error = {};
-                    angular.forEach(_.extend(orig, item), function (value, key) {
+                    tryPublish = true;
+                    _.extend(orig, item);
+                    angular.forEach(authoring.schema, function (value, key) {
+                        if (!orig[key]) {
+                            orig[key] = '';
+                        }
+                    });
+
+                    angular.forEach(orig, function (value, key) {
                         if (value) {
                             if (typeof value === 'object' && !value.length) {
                                 $scope.error[key] = true;
@@ -1522,6 +1532,10 @@
 
                 $scope.autosave = function(item) {
                     $scope.dirty = true;
+                    if (tryPublish) {
+                        validate($scope.origItem, item);
+                    }
+
                     var autosavedItem = authoring.autosave(item);
                     authoringWorkspace.addAutosave();
                     return autosavedItem;
@@ -2891,8 +2905,9 @@
         };
     }
 
-    AuthoringHeaderDirective.$inject = ['api', 'authoringWidgets', '$rootScope', 'archiveService', 'metadata', 'content', 'lodash'];
-    function AuthoringHeaderDirective(api, authoringWidgets, $rootScope, archiveService, metadata, content, lodash) {
+    AuthoringHeaderDirective.$inject = ['api', 'authoringWidgets', '$rootScope', 'archiveService', 'metadata',
+                'content', 'lodash', 'authoring'];
+    function AuthoringHeaderDirective(api, authoringWidgets, $rootScope, archiveService, metadata, content, lodash, authoring) {
         return {
             templateUrl: 'scripts/superdesk-authoring/views/authoring-header.html',
             require: '^sdAuthoringWidgets',
@@ -2975,10 +2990,12 @@
                                     scope.contentType = type;
                                     scope.editor = content.editor(type);
                                     scope.schema = content.schema(type);
+                                    authoring.schema = _.extend({}, scope.editor, scope.schema);
                                 });
                         } else {
                             scope.schema = content.schema();
                             scope.editor = content.editor();
+                            authoring.schema = _.extend({}, scope.editor, scope.schema);
                         }
 
                         // Related Items
