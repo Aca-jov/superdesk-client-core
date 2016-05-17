@@ -1021,11 +1021,12 @@
         'confirm',
         'reloadService',
         '$rootScope',
-        '$interpolate'
+        '$interpolate',
+        'metadata'
     ];
     function AuthoringDirective(superdesk, superdeskFlags, authoringWorkspace, notify, gettext, desks, authoring, api, session, lock,
         privileges, content, $location, referrer, macros, $timeout, $q, modal, archiveService, confirm, reloadService, $rootScope,
-        $interpolate) {
+        $interpolate, metadata) {
         return {
             link: function($scope, elem, attrs) {
                 var _closing;
@@ -1318,27 +1319,36 @@
                     $scope.error = {};
                     tryPublish = true;
                     _.extend(orig, item);
-                    angular.forEach(authoring.schema, function (value, key) {
-                        if (!orig[key]) {
-                            if (!value.type || value.type === 'string') {
-                                orig[key] = '';
-                            }
-                            if (value.type && value.type === 'list') {
-                                orig[key] = [];
-                            }
-                        }
-                    });
+                    angular.forEach(authoring.editor, function (editor, key) {
+                    	if (!authoring.schema[key]) {
+                    		var found = false;
+                    		var cv = _.find(metadata.cvs, function(item) {
+     						   return item._id === key;
+     					    });
 
-                    angular.forEach(orig, function (value, key) {
-                        if (value) {
-                            if (typeof value === 'object' && !value.length) {
-                                $scope.error[key] = true;
+                        	var field = cv.schema_field || 'subject';
+                    		angular.forEach(cv.items, function(row) {
+            					var element = _.find(orig[field], function(item) {
+            						   return item.qcode === row.qcode;
+            					   });
+            					if (element) {
+            						found = true;
+            					}
+            				});
+
+                    		$scope.error[key] = !found;
+                    	} else {
+                    		var value = orig[key];
+                    		if (value) {
+                                if (typeof value === 'object' && Object.keys(value).length === 0) {
+                                    $scope.error[key] = true;
+                                } else {
+                                    $scope.error[key] = false;
+                                }
                             } else {
-                                $scope.error[key] = false;
+                                $scope.error[key] = true;
                             }
-                        } else {
-                            $scope.error[key] = true;
-                        }
+                    	}
                     });
                 }
 
@@ -2967,14 +2977,12 @@
                             content.getType(item.profile)
                                 .then(function(type) {
                                     scope.contentType = type;
-                                    scope.editor = content.editor(type);
-                                    scope.schema = content.schema(type);
-                                    authoring.schema = _.extend({}, scope.editor, scope.schema);
+                                    scope.editor = authoring.editor = content.editor(type);
+                                    scope.schema = authoring.schema = content.schema(type);
                                 });
                         } else {
-                            scope.schema = content.schema();
-                            scope.editor = content.editor();
-                            authoring.schema = _.extend({}, scope.editor, scope.schema);
+                            scope.editor = authoring.editor = content.editor();
+                            scope.schema = authoring.schema = content.schema();
                         }
 
                         // Related Items

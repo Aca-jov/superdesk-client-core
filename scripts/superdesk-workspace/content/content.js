@@ -11,7 +11,7 @@
         priority: {},
         urgency: {},
         anpa_category: {type: 'list'},
-        subject: {type: 'list'},
+        subject: {type: 'list', required: true},
         company_codes: {type: 'list'},
         ednote: {},
         headline: {maxlength: 64, type: 'string'},
