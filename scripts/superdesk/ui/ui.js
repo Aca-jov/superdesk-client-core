@@ -1138,6 +1138,17 @@ function splitterWidget(superdesk, superdeskFlags, $timeout) {
     };
 }
 
+AuthoringResizer.$inject = [];
+function AuthoringResizer() {
+    return {
+        link: function(scope, elem, attr) {
+            elem.find('.main-article').resizable({
+                handles: 'e'
+            });
+        }
+    };
+}
+
 /*
  * Media Query directive is used for creating responsive
  * layout's for single elements on page
@@ -1421,9 +1432,11 @@ export default angular.module('superdesk.ui', [
     .directive('sdDropdownFocus', DropdownFocus)
     .directive('sdWeekdayPicker', WeekdayPickerDirective)
     .directive('sdSplitterWidget', splitterWidget)
+    .directive('sdAuthoringResizer', AuthoringResizer)
     .directive('sdMediaQuery', mediaQuery)
     .directive('sdFocusElement', focusElement)
     .directive('sdValidationError', validationDirective)
     .directive('sdLoading', LoadingDirective)
     .directive('sdMultipleEmails', MultipleEmailsValidation)
     .directive('sdMultiSelect', multiSelectDirective);
+

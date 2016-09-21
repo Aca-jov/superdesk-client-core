@@ -122,8 +122,8 @@ function WidgetsManagerCtrl($scope, $routeParams, authoringWidgets, archiveServi
         }
     });
 }
-AuthoringWidgetsDir.$inject = ['desks', 'commentsService'];
-function AuthoringWidgetsDir(desks, commentsService) {
+AuthoringWidgetsDir.$inject = ['desks', 'commentsService', 'superdeskFlags'];
+function AuthoringWidgetsDir(desks, commentsService, superdeskFlags) {
     return {
         controller: WidgetsManagerCtrl,
         templateUrl: 'scripts/superdesk-authoring/widgets/views/authoring-widgets.html',
@@ -134,6 +134,8 @@ function AuthoringWidgetsDir(desks, commentsService) {
                 stickyHeader = elem.find('.authoring-sticky');
 
             var scrollHandler = _.debounce(clipHeader, 100);
+
+            scope.superdeskFlags = superdeskFlags;
 
             editor.on('scroll', scrollHandler);
             scope.$on('$destroy', function() {

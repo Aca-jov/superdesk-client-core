@@ -24,11 +24,12 @@ AuthoringDirective.$inject = [
     'reloadService',
     '$rootScope',
     '$interpolate',
-    'metadata'
+    'metadata',
+    'keyboardManager'
 ];
 export function AuthoringDirective(superdesk, superdeskFlags, authoringWorkspace, notify, gettext, desks, authoring, api, session, lock,
     privileges, content, $location, referrer, macros, $timeout, $q, modal, archiveService, confirm, reloadService, $rootScope,
-    $interpolate, metadata) {
+    $interpolate, metadata, keyboardManager) {
     return {
         link: function($scope, elem, attrs) {
             var _closing;
@@ -88,6 +89,23 @@ export function AuthoringDirective(superdesk, superdeskFlags, authoringWorkspace
                     });
                 }
             }
+
+            keyboardManager.bind('alt+f11', function() {
+                superdeskFlags.flags.zenMode = superdeskFlags.flags.zenMode ? false : true;
+                $scope.hideMonitoring(superdeskFlags.flags.zenMode);
+            });
+
+            $scope.$on('$destroy', function() {
+                keyboardManager.unbind('alt+f11');
+            });
+
+            $scope.hideMonitoring = function (zenMode) {
+                if (superdeskFlags.flags.authoring && zenMode) {
+                    superdeskFlags.flags.hideMonitoring = true;
+                } else {
+                    superdeskFlags.flags.hideMonitoring = false;
+                }
+            };
 
             /**
              * Start editing current item

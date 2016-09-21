@@ -1,4 +1,4 @@
-<div sd-menu-wrapper></div>
+<div sd-menu-wrapper ng-if="!superdesk.flags.zenMode"></div>
 <div sd-notifications></div>
 
 <div class="loading" ng-if="loading"></div>
@@ -6,7 +6,7 @@
 <div id="main-container" ng-class="superdesk.flags" ng-if="superdesk.flags.workspace === true" ngf-drop="superdesk.openUpload($files)">
     <div id="workspace-container" ng-view sd-splitter-widget></div>
     <div id="authoring-container" ng-if="superdesk.flags.workspace" sd-authoring-container></div>
-    <div id="superdesk-workqueue" ng-if="superdesk.flags.workspace" sd-workqueue></div>
+    <div id="superdesk-workqueue" ng-if="superdesk.flags.workspace && !superdesk.flags.zenMode" sd-workqueue></div>
     <div sd-item-preview-container></div>
 </div>
 

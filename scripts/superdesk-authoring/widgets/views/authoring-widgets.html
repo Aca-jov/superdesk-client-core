@@ -3,7 +3,8 @@
         'active-right': active,
         'right-extended': active.extended
     }">
-    <div class="tablist right-tablist" ng-if="item">
+
+    <div class="tablist right-tablist" ng-if="item && !superdeskFlags.flags.zenMode">
         <ul class="navigation-tabs">
             <li ng-repeat="widget in widgets | orderBy:'order'"
                 ng-class="{active: widget === active}">
