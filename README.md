@@ -123,3 +123,8 @@ You can disable certain content profile fields. Set value to `false` in order to
 - `validatorMediaMetadata`: `object` - describes a fields that are required for media items (images/video). If the field is present in the object then it is displayed.
 - `infoRemovedFields`: `object` - contains fields that should be removed from metadata editing
 
+##### Web Publisher
+
+- `publisher.server` - web publisher domain, eg. `http://example.com`
+- `publisher.base` - web publisher base url, eg. `/api/v1/`
+
